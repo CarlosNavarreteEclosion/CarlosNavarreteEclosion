@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="account_advances_line_form" model="ir.ui.view">
+			<field name="name">account_advances_line_form</field>
+			<field name="model">account.advances_line</field>
+			<field name="arch" type="xml">
+				<form string="View Form" >  
+					<sheet> 
+						<group>
+							<field name="cuenta_analitica_id"/> 
+							<field name="product_id"/> 
+							<field name="partner_id"/> 
+							<field name="name" />
+							<field name="date"/>
+							<field name="valor" />
+						</group>  
+					</sheet> 
+				</form>
+			</field>
+		</record>  
+
+
+		<record id="form_account_advances_form" model="ir.ui.view">
+			<field name="name">account_advances_form</field>
+			<field name="model">account.advances</field>
+			<field name="arch" type="xml">
+				<form string="View Form" >  
+					<sheet> 
+						<header>	
+							<button name="set_confirmar" string="Validar" type="object" class="oe_highlight" states ='1'/>
+							<button name="set_rechazar" string="Rechazar" type="object" class="oe_highlight" states ='1'/>			
+							<button name="set_conciliar" string="Conciliar" type="object" class="oe_highlight" states ='2'/>			
+							<field name="state" widget='statusbar'/>	
+						</header>						
+
+						<group>
+							<field name="name"/>
+							<field name="type_id"  required='1' attrs="{'readonly':[('state','in',['2', '3',])]}"/>
+							<field name="journal_id" required='1' attrs="{'readonly':[('state','in',['2', '3',])]}"/>
+							<field name="bank_journal_id" required='1' attrs="{'readonly':[('state','in',['2', '3',])]}"/>
+							<field name="partner_id" required='1' attrs="{'readonly':[('state','in',['2', '3',])]}"/>
+							<field name="order_id" attrs="{'readonly':[('state','in',['2', '3',])]}" />
+							<field name="date" required='1' attrs="{'readonly':[('state','in',['2', '3',])]}"/>
+							<field name="amount" required='1' attrs="{'readonly':[('state','in',['2', '3',])]}"/>
+							<field name="info" attrs="{'readonly':[('state','in',['2', '3',])]}"/>
+							<field name="move_id" readonly='1' attrs="{'readonly':[('state','in',['2', '3',])]}"/>
+						</group>  
+					<notebook colspan="4">
+						<page string="Regularizacion Anticipos" >
+						 	<field name="advances_ids">  
+								<tree editable="top">
+									<field name="cuenta_analitica_id"/> 
+									<field name="product_id"/> 
+									<field name="partner_id"/> 
+									<field name="name" />
+									<field name="date"/>
+									<field name="state"/>
+
+									<field name="valor" sum="Total"/>
+								</tree>	
+							</field> 
+						</page>
+					</notebook>
+					</sheet>       
+				</form>  
+
+			<div class="oe_chatter">
+				<field name="message_follower_ids" widget="mail_followers"/>
+				<field name="message_ids" widget="mail_thread"/>
+			</div>  
+
+			</field>
+		</record>  
+
+		<record model="ir.ui.view" id="account_advances_tree">
+			<field name="name">account_advances_tree</field>
+			<field name="model">account.advances</field>
+			<field name="arch" type="xml">
+				<tree colors="black: state == '1'; grey: state == '2'; red: state=='3'">
+					<field name="name" />
+					<field name="type_id" />
+					<field name="partner_id"/>
+					<field name="order_id" />
+					<field name="state" />
+					<field name="date" />
+					<field name="journal_id" />
+					<field name="amount" />
+					<field name="info"/>
+				</tree>	
+
+			</field>	
+		</record>	
+
+	<record model="ir.ui.view" id="account_advances_search_form">
+		<field name="name">account_advances_search_form</field>
+		<field name="model">account.advances</field>
+		<field name="arch" type="xml">
+			<search string="Vista busqueda"> 		
+				<field name="partner_id"/>  
+					<field name="name" />
+					<field name="type_id" />
+					<field name="order_id" />
+					<field name="state" />
+					<field name="date" />
+					<field name="journal_id" />
+					<field name="amount" />
+					<field name="info"/>	
+
+<!--				<filter string="Anticipos Hoy" domain="[('date','&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59))),('date','&gt;=', datetime.datetime.combine(context_today(),datetime.time(0,0,0)))]"/>
+  					<filter string="Este Mes" domain="[('date','&ge;=',time.strftime('%%Y-%%m-01'),('date','&le;=',time.strftime('%%Y-%%m-31'))]"/>
+
+					<filter string="esta semana" domain="[('date', '&gt;=', ((context_today()+relativedelta(weeks=-2,days=1, weekday=0)).strftime('%%Y-%%m-%%d'))),
+							 ('date', '&lt;=', ((context_today()+relativedelta(weeks=-1,weekday=6)).strftime('%%Y-%%m-%%d')))]"/> -->
+
+					<group expand="0" string="Agrupar">		
+						<separator/>
+							<filter string="Proveedor" name="partner_id" context="{'group_by':'partner_id'}"/>
+							<filter string="concepto" name="type_id" context="{'group_by':'type_id'}"/>
+
+							<separator/>
+							<filter string="Diario" name="journal_id" context="{'group_by':'journal_id'}"/>
+							<filter string="Estado" name="state" context="{'group_by':'state'}"/>
+							<filter string="Ordenes" name="order_id" context="{'group_by':'order_id'}"/>
+
+							<separator/>
+							<filter string="Fecha" name="date" context="{'group_by':'date'}"/>
+
+						<separator/>						
+					</group>		
+			</search>
+		</field>	
+	</record>	
+
+
+
+	<record model="ir.actions.act_window" id="account_advances_action">
+		<field name="name">Anticipos</field>
+		<field name="res_model">account.advances</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="help" type="html">
+			<p class="oe_view_nocontent_create">Anticipos </p>
+		</field>
+	</record>  
+
+		<menuitem name="Anticipos"
+			id="account_advances_id"
+			parent="account_payment.menu_main_payment"
+ 			action="account_advances_action"/> 
+	</data>
+</openerp>
+

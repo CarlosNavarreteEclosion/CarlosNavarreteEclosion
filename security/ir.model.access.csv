@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+eclo_advances_cars_001,eclo_advances_cars_001,eclo_account_advances_cars.model_account_advances,account.group_account_user,1,1,1,1
+eclo_advances_cars_002,eclo_advances_cars_002,eclo_account_advances_cars.model_account_advances_type,account.group_account_user,1,0,0,0
+eclo_advances_cars_003,eclo_advances_cars_003,eclo_account_advances_cars.model_account_advances_type,account.group_account_manager,1,1,1,1
